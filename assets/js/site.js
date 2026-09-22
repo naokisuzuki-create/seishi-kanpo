@@ -29,7 +29,6 @@ if (filterButtons.length && filterItems.length) {
   });
 }
 
-
 const contactForm = document.querySelector('#contact-form');
 
 if (contactForm) {
@@ -37,7 +36,23 @@ if (contactForm) {
   const status = document.querySelector('#contact-status');
   const submit = document.querySelector('#contact-submit');
 
-  if (startedAt) startedAt.value = String(Date.now());
+  const resetStartedAt = () => {
+    if (startedAt) startedAt.value = String(Date.now());
+  };
+
+  const setSubmitting = (submitting) => {
+    if (!submit) return;
+    submit.disabled = submitting;
+    submit.textContent = submitting ? '送信中…' : '送信';
+  };
+
+  const resetTurnstile = () => {
+    if (window.turnstile && typeof window.turnstile.reset === 'function') {
+      try { window.turnstile.reset(); } catch (_) {}
+    }
+  };
+
+  resetStartedAt();
 
   contactForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -67,7 +82,26 @@ if (contactForm) {
       return;
     }
 
-    if (status) status.textContent = '現在、送信先の最終設定中です。';
-    if (submit) submit.blur();
+    setSubmitting(true);
+    if (status) status.textContent = '送信しています…';
+
+    HTMLFormElement.prototype.submit.call(contactForm);
+  });
+
+  window.addEventListener('message', (event) => {
+    const data = event.data;
+    if (!data || data.type !== 'seishi-kanpo-contact-result') return;
+
+    setSubmitting(false);
+    resetTurnstile();
+    resetStartedAt();
+
+    if (data.ok === true) {
+      contactForm.reset();
+      resetStartedAt();
+      if (status) status.textContent = data.message || 'お問い合わせを送信しました。ありがとうございます。';
+    } else {
+      if (status) status.textContent = data.message || '送信できませんでした。時間をおいて、もう一度お試しください。';
+    }
   });
 }
