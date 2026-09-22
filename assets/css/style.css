@@ -86,3 +86,25 @@
   .about-page{padding-top:14px}
   .about-profile,.about-record{font-size:.9rem}
 }
+
+.contact-hero{max-width:760px;padding-top:46px}
+.contact-hero h1{font-size:2rem}
+.contact-intro{margin:14px 0 0;color:var(--muted);font-size:.92rem;line-height:1.75}
+.contact-page{max-width:760px;padding:22px 0 34px}
+.contact-page .contact-form{gap:18px;margin-top:0}
+.contact-page .contact-form label{gap:6px}
+.contact-page .contact-form label>span{display:flex;gap:8px;align-items:center;font-size:.8rem;color:var(--ink)}
+.contact-page .contact-form label>span b{font-size:.66rem;font-weight:400;color:var(--muted)}
+.contact-page .contact-form input,.contact-page .contact-form select,.contact-page .contact-form textarea{padding:10px 12px;font-size:.92rem;line-height:1.6}
+.contact-page .contact-form textarea{resize:vertical;min-height:150px}
+.contact-security{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:2px}
+.contact-security p,.contact-note,.contact-status{margin:0;color:var(--muted);font-size:.72rem;line-height:1.6}
+.turnstile-slot{min-height:0}
+.contact-page .contact-form button{margin-top:0;color:var(--ink);cursor:pointer}
+.contact-page .contact-form button:hover{background:var(--ink);color:var(--paper)}
+.hp-field{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important}
+@media(max-width:640px){
+  .contact-hero{padding-top:34px}
+  .contact-page{padding-top:18px}
+  .contact-security{display:block}
+}
