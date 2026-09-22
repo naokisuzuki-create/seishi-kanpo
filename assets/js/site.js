@@ -29,6 +29,7 @@ if (filterButtons.length && filterItems.length) {
   });
 }
 
+const CONTACT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxMcjltg6ShhBJaoP6fpmNCchccoj0rlcmWZ8-A9o7qhC-daSbc6WOELPK_qMxWz7mCVA/exec';
 const contactForm = document.querySelector('#contact-form');
 
 if (contactForm) {
@@ -54,7 +55,7 @@ if (contactForm) {
 
   resetStartedAt();
 
-  contactForm.addEventListener('submit', (event) => {
+  contactForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const honeypot = contactForm.querySelector('input[name="website"]');
@@ -76,32 +77,48 @@ if (contactForm) {
       return;
     }
 
-    const turnstileToken = String(new FormData(contactForm).get('cf-turnstile-response') || '').trim();
+    const formData = new FormData(contactForm);
+    const turnstileToken = String(formData.get('cf-turnstile-response') || '').trim();
+
     if (!turnstileToken) {
       if (status) status.textContent = 'スパム対策の確認が完了していません。少し待ってから、もう一度お試しください。';
       return;
     }
 
+    const payload = {
+      action: 'contact',
+      name: String(formData.get('name') || '').trim(),
+      email: String(formData.get('email') || '').trim(),
+      type: String(formData.get('type') || '').trim(),
+      message: String(formData.get('message') || '').trim(),
+      website: String(formData.get('website') || '').trim(),
+      form_started_at: Number(formData.get('form_started_at') || 0),
+      turnstile_token: turnstileToken
+    };
+
     setSubmitting(true);
     if (status) status.textContent = '送信しています…';
 
-    HTMLFormElement.prototype.submit.call(contactForm);
-  });
+    try {
+      await fetch(CONTACT_ENDPOINT, {
+        method: 'POST',
+        mode: 'no-cors',
+        cache: 'no-store',
+        headers: {'Content-Type': 'text/plain;charset=UTF-8'},
+        body: JSON.stringify(payload)
+      });
 
-  window.addEventListener('message', (event) => {
-    const data = event.data;
-    if (!data || data.type !== 'seishi-kanpo-contact-result') return;
-
-    setSubmitting(false);
-    resetTurnstile();
-    resetStartedAt();
-
-    if (data.ok === true) {
       contactForm.reset();
       resetStartedAt();
-      if (status) status.textContent = data.message || 'お問い合わせを送信しました。ありがとうございます。';
-    } else {
-      if (status) status.textContent = data.message || '送信できませんでした。時間をおいて、もう一度お試しください。';
+      resetTurnstile();
+      if (status) status.textContent = 'お問い合わせを受け付けました。ありがとうございます。';
+    } catch (error) {
+      console.error('Contact submit failed.', error);
+      resetStartedAt();
+      resetTurnstile();
+      if (status) status.textContent = '送信できませんでした。通信環境をご確認のうえ、もう一度お試しください。';
+    } finally {
+      setSubmitting(false);
     }
   });
 }
