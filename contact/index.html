@@ -1,5 +1,59 @@
 ---
 layout: default
 title: お問い合わせ
+description: "静思緩歩への執筆、講演、DX・業務改善、研究・統計などに関するお問い合わせ。"
 ---
-<section class="page-hero shell compact-hero"><p class="eyebrow">CONTACT</p><h1>お問い合わせ</h1></section><section class="shell article-shell section-space"><p class="quiet-note">フォームは次工程で Google Forms または専用フォームサービスに接続します。メールアドレスはサイト上に直接表示しません。</p><form class="contact-form" action="#" method="post" onsubmit="return false;"><label>お名前<span>必須</span><input type="text" name="name" required></label><label>メールアドレス<span>必須</span><input type="email" name="email" required></label><label>お問い合わせ種別<select name="type"><option>DX・生成AI・業務改善</option><option>研究・統計</option><option>執筆</option><option>講演</option><option>その他</option></select></label><label>お問い合わせ内容<span>必須</span><textarea name="message" rows="8" required></textarea></label><button type="submit" disabled>送信（接続前）</button></form></section>
+
+<section class="page-hero shell compact-hero contact-hero">
+  <p class="eyebrow">CONTACT</p>
+  <h1>お問い合わせ</h1>
+  <p class="contact-intro">執筆・講演、DX・業務改善、研究・統計などに関するご相談がありましたら、こちらからご連絡ください。</p>
+</section>
+
+<section class="shell contact-page">
+  <form class="contact-form" id="contact-form" action="#" method="post" novalidate>
+    <input type="hidden" name="form_started_at" id="form-started-at" value="">
+
+    <div class="hp-field" aria-hidden="true">
+      <label for="website">この欄は入力しないでください</label>
+      <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+    </div>
+
+    <label>
+      <span>お名前 <b>必須</b></span>
+      <input type="text" name="name" autocomplete="name" maxlength="80" required>
+    </label>
+
+    <label>
+      <span>メールアドレス <b>必須</b></span>
+      <input type="email" name="email" autocomplete="email" maxlength="160" required>
+    </label>
+
+    <label>
+      <span>お問い合わせ種別</span>
+      <select name="type">
+        <option value="DX・業務改善">DX・業務改善</option>
+        <option value="研究・統計">研究・統計</option>
+        <option value="執筆">執筆</option>
+        <option value="講演">講演</option>
+        <option value="その他">その他</option>
+      </select>
+    </label>
+
+    <label>
+      <span>お問い合わせ内容 <b>必須</b></span>
+      <textarea name="message" rows="7" maxlength="4000" required></textarea>
+    </label>
+
+    <div class="contact-security">
+      <p>スパム対策のため、送信時に自動判定を行います。</p>
+      <div id="turnstile-slot" class="turnstile-slot" aria-label="スパム対策"></div>
+    </div>
+
+    <p class="contact-status" id="contact-status" role="status" aria-live="polite"></p>
+
+    <button type="submit" id="contact-submit">送信</button>
+
+    <p class="contact-note">送信内容は、お問い合わせへの対応以外の目的では使用しません。</p>
+  </form>
+</section>
