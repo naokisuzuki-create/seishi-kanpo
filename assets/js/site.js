@@ -61,6 +61,12 @@ if (contactForm) {
       return;
     }
 
+    const turnstileToken = String(new FormData(contactForm).get('cf-turnstile-response') || '').trim();
+    if (!turnstileToken) {
+      if (status) status.textContent = 'スパム対策の確認が完了していません。少し待ってから、もう一度お試しください。';
+      return;
+    }
+
     if (status) status.textContent = '現在、送信先の最終設定中です。';
     if (submit) submit.blur();
   });
