@@ -55,3 +55,34 @@
   .post-pagination__next{text-align:left}
   .article-toc{padding:16px 0}
 }
+
+.about-hero{padding-top:42px;max-width:980px}
+.about-hero h1{font-size:2rem}
+.about-page{max-width:980px;padding:18px 0 24px}
+.about-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.35fr);gap:42px;align-items:start}
+.about-profile,.about-record{font-size:.83rem;line-height:1.68}
+.about-profile h2,.about-record h2{margin:0 0 10px;font-size:1.15rem;font-weight:500}
+.about-record h3{margin:0 0 8px;font-size:.92rem;font-weight:500}
+.about-profile p{margin:0 0 10px}
+.publication-list{margin:0;padding-left:1.15rem}
+.publication-list li{margin:0 0 7px;line-height:1.48}
+.publication-list strong{font-weight:500}
+.quiet-profile-note{margin:8px 0 0;color:var(--muted);font-size:.78rem}
+.awards-heading{margin-top:18px!important}
+.award-list{margin:0;padding-left:1.15rem}
+.award-list li{margin:0 0 5px;line-height:1.45}
+.about-footer-link{margin-top:18px;padding-top:12px;border-top:1px solid var(--line);display:flex;gap:16px;align-items:center;justify-content:space-between;font-size:.78rem;color:var(--muted)}
+.about-footer-link .text-link{margin-top:0;white-space:nowrap;color:var(--ink)}
+.author-mini{padding-top:26px;padding-bottom:26px}
+.author-mini h2{margin:6px 0 4px}
+@media(max-width:900px){
+  .about-grid{grid-template-columns:1fr;gap:28px}
+  .about-page{max-width:760px}
+  .about-footer-link{display:block}
+  .about-footer-link .text-link{margin-top:8px}
+}
+@media(max-width:640px){
+  .about-hero{padding-top:34px}
+  .about-page{padding-top:14px}
+  .about-profile,.about-record{font-size:.9rem}
+}
