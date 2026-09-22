@@ -1,0 +1,19 @@
+title: 静思緩歩
+description: 日々の仕事や学びのなかで考えたことを、少しずつ書いていく個人メディア。
+lang: ja
+url: ""
+baseurl: ""
+author:
+  name: 鈴木尚紀
+  url: /about/
+permalink: /articles/:year/:month/:day/:title/
+markdown: kramdown
+future: false
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-feed
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock

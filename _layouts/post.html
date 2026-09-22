@@ -1,0 +1,4 @@
+---
+layout: default
+---
+<article class="article shell article-shell"><nav class="breadcrumbs" aria-label="パンくず"><a href="{{ '/' | relative_url }}">トップ</a><span> / </span>{% if page.category_label %}<span>{{ page.category_label }}</span><span> / </span>{% endif %}<span aria-current="page">{{ page.title }}</span></nav><header class="article-header">{% if page.category_label %}<p class="eyebrow">{{ page.category_label }}</p>{% endif %}<h1>{{ page.title }}</h1><p class="article-meta"><time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: '%Y.%m.%d' }}</time>{% if page.last_modified_at %}<span>更新 {{ page.last_modified_at | date: '%Y.%m.%d' }}</span>{% endif %}</p></header><div class="prose">{{ content }}</div></article>
