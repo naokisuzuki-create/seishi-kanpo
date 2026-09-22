@@ -46,11 +46,6 @@ layout: default
       </p>
     </header>
 
-    <nav class="article-toc" aria-label="この記事の目次">
-      <p class="sidebar-heading">この記事の目次</p>
-      <div class="article-toc__links"></div>
-    </nav>
-
     <div class="prose">{{ content }}</div>
 
     {% assign related = site.posts | where: 'category_key', page.category_key %}
