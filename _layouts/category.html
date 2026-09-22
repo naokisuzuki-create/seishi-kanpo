@@ -4,19 +4,21 @@ layout: default
 <section class="page-hero shell compact-hero category-hero">
   <p class="eyebrow">CATEGORY</p>
   <h1>{{ page.title }}</h1>
+  <p class="category-intro">このテーマの記事一覧です。</p>
 </section>
+
 <section class="shell section-space category-list">
   {% assign posts = site.posts | where: 'category_key', page.category_key %}
   {% if posts.size > 0 %}
-  <div class="post-grid">
+  <div class="article-list">
     {% for post in posts %}
-    <a class="post-card" href="{{ post.url | relative_url }}">
-      {% if post.image %}<img src="{{ post.image | relative_url }}" alt="" loading="lazy">{% endif %}
-      <div class="post-card__body">
-        <p class="eyebrow">{{ post.category_label }}</p>
-        <h2>{{ post.title }}</h2>
+    <a class="article-list__item" href="{{ post.url | relative_url }}">
+      <div class="article-list__meta">
         <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time>
       </div>
+      <h2>{{ post.title }}</h2>
+      {% if post.description %}<p>{{ post.description }}</p>{% endif %}
+      <span class="article-list__link">記事を読む →</span>
     </a>
     {% endfor %}
   </div>
