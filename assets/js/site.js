@@ -29,22 +29,3 @@ if (filterButtons.length && filterItems.length) {
   });
 }
 
-const toc = document.querySelector('.article-toc');
-const tocLinks = document.querySelector('.article-toc__links');
-const proseHeadings = document.querySelectorAll('.prose h2, .prose h3');
-
-if (toc && tocLinks) {
-  if (proseHeadings.length < 2) {
-    toc.hidden = true;
-  } else {
-    proseHeadings.forEach((heading, index) => {
-      if (!heading.id) heading.id = `section-${index + 1}`;
-
-      const link = document.createElement('a');
-      link.href = `#${heading.id}`;
-      link.textContent = heading.textContent;
-      if (heading.tagName.toLowerCase() === 'h3') link.classList.add('is-sub');
-      tocLinks.appendChild(link);
-    });
-  }
-}
