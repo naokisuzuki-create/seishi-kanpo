@@ -1,0 +1,40 @@
+---
+layout: default
+title: 記事一覧
+permalink: /articles/
+---
+<section class="page-hero shell compact-hero articles-hero">
+  <p class="eyebrow">ARTICLES</p>
+  <h1>記事一覧</h1>
+  <p class="category-intro">テーマを選んで、これまでの記事を読むことができます。</p>
+</section>
+
+<section class="shell section-space articles-page">
+  <div class="article-filters" aria-label="記事をテーマで絞り込む">
+    <button class="filter-button is-active" type="button" data-filter="all">すべて</button>
+    <button class="filter-button" type="button" data-filter="dx">DX・業務改善</button>
+    <button class="filter-button" type="button" data-filter="research">研究・統計・学術</button>
+    <button class="filter-button" type="button" data-filter="work">働き方</button>
+    <button class="filter-button" type="button" data-filter="life">生き方・学び・挑戦</button>
+  </div>
+
+  <div class="article-list filterable-list">
+    {% for post in site.posts %}
+    <article class="article-list__item filterable-item" data-category="{{ post.category_key }}">
+      <a href="{{ post.url | relative_url }}">
+        <div class="article-list__meta">
+          <span>{{ post.category_label }}</span>
+          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time>
+        </div>
+        <h2>{{ post.title }}</h2>
+        {% if post.description %}<p>{{ post.description }}</p>{% endif %}
+        <span class="article-list__link">記事を読む →</span>
+      </a>
+    </article>
+    {% endfor %}
+  </div>
+
+  {% if site.posts.size == 0 %}
+  <p class="quiet-note">記事はこれから少しずつ追加していきます。</p>
+  {% endif %}
+</section>
