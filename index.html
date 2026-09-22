@@ -5,10 +5,10 @@ title: 静思緩歩
 <section class="hero shell"><picture><source srcset="{{ '/assets/images/header.webp' | relative_url }}" type="image/webp"><img src="{{ '/assets/images/original/header.png' | relative_url }}" alt="静思緩歩 THINK DEEPLY, WALK GENTLY" fetchpriority="high"></picture></section>
 <section class="intro shell narrow-center"><p>日々の仕事や学びのなかで考えたことを、少しずつ書いていきます。<br>テーマは、DX、研究、働き方、そして生き方です。</p></section>
 <section class="shell section-space" aria-labelledby="categories-heading"><h2 id="categories-heading" class="section-title">テーマ</h2><div class="category-grid">
-<a class="category-card" href="{{ '/dx/' | relative_url }}"><img src="{{ '/assets/images/dx.webp' | relative_url }}" alt="" loading="lazy"><h3>DX・業務改善について</h3></a>
-<a class="category-card" href="{{ '/research/' | relative_url }}"><img src="{{ '/assets/images/research.webp' | relative_url }}" alt="" loading="lazy"><h3>研究・統計・学術について</h3></a>
-<a class="category-card" href="{{ '/work/' | relative_url }}"><img src="{{ '/assets/images/work.webp' | relative_url }}" alt="" loading="lazy"><h3>働き方について</h3></a>
-<a class="category-card" href="{{ '/life/' | relative_url }}"><img src="{{ '/assets/images/life.webp' | relative_url }}" alt="" loading="lazy"><h3>生き方・学び・挑戦について</h3></a></div></section>
+<a class="category-card" href="{{ '/dx/' | relative_url }}"><img src="{{ '/assets/images/dx.webp' | relative_url }}" alt="" loading="lazy"></a>
+<a class="category-card" href="{{ '/research/' | relative_url }}"><img src="{{ '/assets/images/research.webp' | relative_url }}" alt="" loading="lazy"></a>
+<a class="category-card" href="{{ '/work/' | relative_url }}"><img src="{{ '/assets/images/work.webp' | relative_url }}" alt="" loading="lazy"></a>
+<a class="category-card" href="{{ '/life/' | relative_url }}"><img src="{{ '/assets/images/life.webp' | relative_url }}" alt="" loading="lazy"></a></div></section>
 <section class="shell section-space" aria-labelledby="latest-heading"><h2 id="latest-heading" class="section-title">最新記事</h2>{% if site.posts.size > 0 %}<div class="post-grid">{% for post in site.posts limit:6 %}<a class="post-card" href="{{ post.url | relative_url }}">{% if post.image %}<img src="{{ post.image | relative_url }}" alt="" loading="lazy">{% endif %}<div class="post-card__body"><p class="eyebrow">{{ post.category_label }}</p><h3>{{ post.title }}</h3><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time></div></a>{% endfor %}</div>{% else %}<p class="quiet-note">最初の記事を準備しています。</p>{% endif %}</section>
 <section class="shell section-space author-mini"><div><p class="eyebrow">AUTHOR</p><h2>鈴木尚紀</h2><p>医療機関で臨床、研究支援、データ分析、DX推進などに携わっています。<br>日々考えたことを、自分なりの言葉で記録しています。</p><a class="text-link" href="{{ '/about/' | relative_url }}">著者について →</a></div></section>
 <section class="shell section-space contact-mini"><p>執筆・講演・ご相談などはこちら</p><a class="text-link" href="{{ '/contact/' | relative_url }}">お問い合わせ →</a></section>
