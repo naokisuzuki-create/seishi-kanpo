@@ -14,7 +14,7 @@ tags:
   - 空手
   - 生き方
 description: "医療、DX、研究、空手。これまで歩いてきた道と、これから「静思緩歩」で書いていきたいこと。"
-image: /assets/images/header.webp
+image: /assets/images/life.webp
 ---
 
 もともとは医療従事者として、長く臨床の現場で働いてきました。
