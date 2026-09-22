@@ -1,8 +1,8 @@
 title: 静思緩歩
 description: 日々の仕事や学びのなかで考えたことを、少しずつ書いていく個人メディア。
 lang: ja
-url: ""
-baseurl: ""
+url: "https://naokisuzuki-create.github.io"
+baseurl: "/seishi-kanpo"
 author:
   name: 鈴木尚紀
   url: /about/
