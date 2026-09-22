@@ -108,3 +108,5 @@
   .contact-page{padding-top:18px}
   .contact-security{display:block}
 }
+
+.contact-response-frame{position:absolute;width:1px;height:1px;border:0;opacity:0;pointer-events:none}
