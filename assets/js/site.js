@@ -75,46 +75,66 @@ if (contactForm) {
       return;
     }
 
-    const frame = document.createElement('iframe');
-    frame.className = 'contact-response-frame';
-    frame.title = '送信結果確認';
-    frame.setAttribute('aria-hidden', 'true');
-    frame.src = CONTACT_ENDPOINT + '?action=contact_status&id=' + encodeURIComponent(requestId) + '&t=' + Date.now();
-    document.body.appendChild(frame);
+    const callbackName = '__seishiContactStatus_' + Date.now() + '_' + attempt;
+    const script = document.createElement('script');
+    let settled = false;
+
+    const cleanup = () => {
+      if (settled) return;
+      settled = true;
+      try { delete window[callbackName]; } catch (_) { window[callbackName] = undefined; }
+      script.remove();
+    };
+
+    window[callbackName] = (data) => {
+      cleanup();
+
+      if (!data || data.type !== 'seishi-kanpo-contact-result') {
+        window.setTimeout(() => checkResult(requestId, attempt + 1), 700);
+        return;
+      }
+
+      if (data.pending === true) {
+        window.setTimeout(() => checkResult(requestId, attempt + 1), 700);
+        return;
+      }
+
+      setSubmitting(false);
+      resetTurnstile();
+      resetStartedAt();
+
+      if (data.ok === true) {
+        contactForm.reset();
+        resetStartedAt();
+        setStatus(data.message || 'お問い合わせを受け付けました。ありがとうございます。', 'success');
+      } else {
+        setStatus(data.message || '送信できませんでした。時間をおいて、もう一度お試しください。', 'error');
+      }
+    };
+
+    script.onerror = () => {
+      cleanup();
+      window.setTimeout(() => checkResult(requestId, attempt + 1), 700);
+    };
+
+    script.src =
+      CONTACT_ENDPOINT +
+      '?action=contact_status&id=' + encodeURIComponent(requestId) +
+      '&callback=' + encodeURIComponent(callbackName) +
+      '&t=' + Date.now();
+
+    document.head.appendChild(script);
 
     window.setTimeout(() => {
-      frame.remove();
-      if (contactForm.dataset.resultReceived !== requestId) {
-        checkResult(requestId, attempt + 1);
+      if (!settled) {
+        cleanup();
+        window.setTimeout(() => checkResult(requestId, attempt + 1), 700);
       }
-    }, 1000);
+    }, 1800);
   };
 
   resetStartedAt();
 
-  window.addEventListener('message', (event) => {
-    const data = event.data;
-    if (!data || data.type !== 'seishi-kanpo-contact-result') return;
-
-    const requestId = String(data.request_id || '');
-    if (!requestId) return;
-
-    contactForm.dataset.resultReceived = requestId;
-
-    if (data.pending === true) return;
-
-    setSubmitting(false);
-    resetTurnstile();
-    resetStartedAt();
-
-    if (data.ok === true) {
-      contactForm.reset();
-      resetStartedAt();
-      setStatus(data.message || 'お問い合わせを受け付けました。ありがとうございます。', 'success');
-    } else {
-      setStatus(data.message || '送信できませんでした。時間をおいて、もう一度お試しください。', 'error');
-    }
-  });
 
   contactForm.addEventListener('submit', async (event) => {
     event.preventDefault();
