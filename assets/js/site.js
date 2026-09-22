@@ -41,6 +41,12 @@ if (contactForm) {
     if (startedAt) startedAt.value = String(Date.now());
   };
 
+  const setStatus = (message, type = '') => {
+    if (!status) return;
+    status.textContent = message;
+    status.className = 'contact-status' + (type ? ' ' + type : '');
+  };
+
   const setSubmitting = (submitting) => {
     if (!submit) return;
     submit.disabled = submitting;
@@ -53,7 +59,62 @@ if (contactForm) {
     }
   };
 
+  const createRequestId = () => {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+      return window.crypto.randomUUID();
+    }
+    return 'req-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+  };
+
+  const checkResult = (requestId, attempt = 0) => {
+    if (attempt >= 15) {
+      setSubmitting(false);
+      resetTurnstile();
+      resetStartedAt();
+      setStatus('送信結果を確認できませんでした。時間をおいて、もう一度お試しください。', 'error');
+      return;
+    }
+
+    const frame = document.createElement('iframe');
+    frame.className = 'contact-response-frame';
+    frame.title = '送信結果確認';
+    frame.setAttribute('aria-hidden', 'true');
+    frame.src = CONTACT_ENDPOINT + '?action=contact_status&id=' + encodeURIComponent(requestId) + '&t=' + Date.now();
+    document.body.appendChild(frame);
+
+    window.setTimeout(() => {
+      frame.remove();
+      if (contactForm.dataset.resultReceived !== requestId) {
+        checkResult(requestId, attempt + 1);
+      }
+    }, 1000);
+  };
+
   resetStartedAt();
+
+  window.addEventListener('message', (event) => {
+    const data = event.data;
+    if (!data || data.type !== 'seishi-kanpo-contact-result') return;
+
+    const requestId = String(data.request_id || '');
+    if (!requestId) return;
+
+    contactForm.dataset.resultReceived = requestId;
+
+    if (data.pending === true) return;
+
+    setSubmitting(false);
+    resetTurnstile();
+    resetStartedAt();
+
+    if (data.ok === true) {
+      contactForm.reset();
+      resetStartedAt();
+      setStatus(data.message || 'お問い合わせを受け付けました。ありがとうございます。', 'success');
+    } else {
+      setStatus(data.message || '送信できませんでした。時間をおいて、もう一度お試しください。', 'error');
+    }
+  });
 
   contactForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -63,12 +124,12 @@ if (contactForm) {
     const elapsed = Date.now() - started;
 
     if (honeypot && honeypot.value.trim() !== '') {
-      if (status) status.textContent = '送信できませんでした。';
+      setStatus('送信できませんでした。', 'error');
       return;
     }
 
     if (elapsed < 3000) {
-      if (status) status.textContent = '少し時間をおいてから、もう一度送信してください。';
+      setStatus('少し時間をおいてから、もう一度送信してください。', 'error');
       return;
     }
 
@@ -81,12 +142,16 @@ if (contactForm) {
     const turnstileToken = String(formData.get('cf-turnstile-response') || '').trim();
 
     if (!turnstileToken) {
-      if (status) status.textContent = 'スパム対策の確認が完了していません。少し待ってから、もう一度お試しください。';
+      setStatus('スパム対策の確認が完了していません。少し待ってから、もう一度お試しください。', 'error');
       return;
     }
 
+    const requestId = createRequestId();
+    contactForm.dataset.resultReceived = '';
+
     const payload = {
       action: 'contact',
+      request_id: requestId,
       name: String(formData.get('name') || '').trim(),
       email: String(formData.get('email') || '').trim(),
       type: String(formData.get('type') || '').trim(),
@@ -97,7 +162,7 @@ if (contactForm) {
     };
 
     setSubmitting(true);
-    if (status) status.textContent = '送信しています…';
+    setStatus('送信しています…');
 
     try {
       await fetch(CONTACT_ENDPOINT, {
@@ -108,17 +173,14 @@ if (contactForm) {
         body: JSON.stringify(payload)
       });
 
-      contactForm.reset();
-      resetStartedAt();
-      resetTurnstile();
-      if (status) status.textContent = 'お問い合わせを受け付けました。ありがとうございます。';
+      setStatus('送信結果を確認しています…');
+      checkResult(requestId);
     } catch (error) {
       console.error('Contact submit failed.', error);
+      setSubmitting(false);
       resetStartedAt();
       resetTurnstile();
-      if (status) status.textContent = '送信できませんでした。通信環境をご確認のうえ、もう一度お試しください。';
-    } finally {
-      setSubmitting(false);
+      setStatus('送信できませんでした。通信環境をご確認のうえ、もう一度お試しください。', 'error');
     }
   });
 }
