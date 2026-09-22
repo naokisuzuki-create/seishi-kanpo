@@ -110,3 +110,7 @@
 }
 
 .contact-response-frame{position:absolute;width:1px;height:1px;border:0;opacity:0;pointer-events:none}
+
+.contact-status{min-height:1.8em;margin:2px 0 0;font-size:.92rem;line-height:1.7;font-weight:500}
+.contact-status.success,.contact-status.error{padding:12px 14px;border:1px solid var(--line);background:var(--paper-soft)}
+.contact-status.success{font-size:1rem}
