@@ -66,8 +66,38 @@ if (contactForm) {
     return 'req-' + Date.now() + '-' + Math.random().toString(36).slice(2);
   };
 
+  const pendingStatusChecks = new Map();
+
+  window.__seishiContactStatus = (data) => {
+    if (!data || data.type !== 'seishi-kanpo-contact-result') return;
+
+    const requestId = String(data.request_id || '');
+    if (!requestId || !pendingStatusChecks.has(requestId)) return;
+
+    const state = pendingStatusChecks.get(requestId);
+
+    if (data.pending === true) {
+      window.setTimeout(() => checkResult(requestId, state.attempt + 1), 700);
+      return;
+    }
+
+    pendingStatusChecks.delete(requestId);
+    setSubmitting(false);
+    resetTurnstile();
+    resetStartedAt();
+
+    if (data.ok === true) {
+      contactForm.reset();
+      resetStartedAt();
+      setStatus(data.message || 'お問い合わせを受け付けました。ありがとうございます。', 'success');
+    } else {
+      setStatus(data.message || '送信できませんでした。時間をおいて、もう一度お試しください。', 'error');
+    }
+  };
+
   const checkResult = (requestId, attempt = 0) => {
     if (attempt >= 15) {
+      pendingStatusChecks.delete(requestId);
       setSubmitting(false);
       resetTurnstile();
       resetStartedAt();
@@ -75,62 +105,24 @@ if (contactForm) {
       return;
     }
 
-    const callbackName = '__seishiContactStatus_' + Date.now() + '_' + attempt;
+    pendingStatusChecks.set(requestId, { attempt });
+
     const script = document.createElement('script');
-    let settled = false;
-
-    const cleanup = () => {
-      if (settled) return;
-      settled = true;
-      try { delete window[callbackName]; } catch (_) { window[callbackName] = undefined; }
-      script.remove();
-    };
-
-    window[callbackName] = (data) => {
-      cleanup();
-
-      if (!data || data.type !== 'seishi-kanpo-contact-result') {
-        window.setTimeout(() => checkResult(requestId, attempt + 1), 700);
-        return;
-      }
-
-      if (data.pending === true) {
-        window.setTimeout(() => checkResult(requestId, attempt + 1), 700);
-        return;
-      }
-
-      setSubmitting(false);
-      resetTurnstile();
-      resetStartedAt();
-
-      if (data.ok === true) {
-        contactForm.reset();
-        resetStartedAt();
-        setStatus(data.message || 'お問い合わせを受け付けました。ありがとうございます。', 'success');
-      } else {
-        setStatus(data.message || '送信できませんでした。時間をおいて、もう一度お試しください。', 'error');
-      }
-    };
-
-    script.onerror = () => {
-      cleanup();
-      window.setTimeout(() => checkResult(requestId, attempt + 1), 700);
-    };
-
+    script.async = true;
     script.src =
       CONTACT_ENDPOINT +
       '?action=contact_status&id=' + encodeURIComponent(requestId) +
-      '&callback=' + encodeURIComponent(callbackName) +
+      '&callback=__seishiContactStatus' +
       '&t=' + Date.now();
 
-    document.head.appendChild(script);
+    script.onload = () => script.remove();
 
-    window.setTimeout(() => {
-      if (!settled) {
-        cleanup();
-        window.setTimeout(() => checkResult(requestId, attempt + 1), 700);
-      }
-    }, 1800);
+    script.onerror = () => {
+      script.remove();
+      window.setTimeout(() => checkResult(requestId, attempt + 1), 700);
+    };
+
+    document.head.appendChild(script);
   };
 
   resetStartedAt();
